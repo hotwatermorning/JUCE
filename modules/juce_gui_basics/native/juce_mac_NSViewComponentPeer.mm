@@ -139,8 +139,14 @@ public:
             [window retain];
 
             [window setExcludedFromWindowsMenu: (windowStyleFlags & windowIsTemporary) != 0];
-            [window setIgnoresMouseEvents: (windowStyleFlags & windowIgnoresMouseClicks) != 0];
-
+            
+            // if `setIgnoresMouseEvents` is set as false at least once,
+            // mouse clicking is not passed through to a back window.
+            // thus do not call this unless `windowIgnoresMouseClicks` is set.
+            if((windowStyleFlags & windowIgnoresMouseClicks) != 0) {
+                [window setIgnoresMouseEvents: true];
+            }
+            
            #if defined (MAC_OS_X_VERSION_10_7) && (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_7)
             if ((windowStyleFlags & (windowHasMaximiseButton | windowHasTitleBar)) == (windowHasMaximiseButton | windowHasTitleBar))
                 [window setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
